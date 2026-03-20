@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.17.3-buster
-RUN GO111MODULE=off go get -u github.com/rexray/gocsi/csc
+FROM golang:1.22
+RUN go install github.com/rexray/gocsi/csc@latest
 
 FROM centos:7.6.1810
 
