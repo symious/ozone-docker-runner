@@ -45,7 +45,6 @@ RUN rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.
 RUN yum install -y \
       awscli \
       bzip2 \
-      java-11-openjdk \
       jq \
       nmap-ncat \
       python3 python3-pip \
@@ -76,8 +75,27 @@ RUN cd /opt && \
     mv async-profiler-2.0-linux-x64 profiler
 
 ENV JAVA_HOME=/usr/lib/jvm/jre/
+# OpenJDK 21
+RUN set -eux ; \
+    ARCH="$(arch)"; \
+    case "${ARCH}" in \
+        x86_64) \
+            url='http://nexus-repo.data-infra.shopee.io/repository/file_server/jdk/stable/openjdk-21.0.9_linux-x64_bin.tar.gz'; \
+            sha256='bac294c76cbac4b60fb7b329e60cb0c2770b69c48f9859138eb8bb98555ee3e0'; \
+            ;; \
+        *) echo "Unsupported architecture: ${ARCH}"; exit 1 ;; \
+    esac && \
+    curl -L ${url} -o openjdk.tar.gz && \
+    echo "${sha256} *openjdk.tar.gz" | sha256sum -c - && \
+    tar xzvf openjdk.tar.gz -C /usr/local && \
+    rm -f openjdk.tar.gz
+
+ENV JAVA_HOME=/usr/local/jdk-21.0.9
+# compatibility with Ozone 1.4.0 and earlier compose env.
+RUN mkdir -p /usr/lib/jvm && ln -s $JAVA_HOME /usr/lib/jvm/jre
+
 ENV LD_LIBRARY_PATH /usr/local/lib
-ENV PATH /opt/hadoop/libexec:$PATH:/opt/hadoop/bin
+ENV PATH /opt/hadoop/libexec:$PATH:$JAVA_HOME/bin:/opt/hadoop/bin
 
 RUN groupadd --gid 1000 hadoop
 RUN useradd --uid 1000 hadoop --gid 100 --home /opt/hadoop
