@@ -50,6 +50,12 @@ RUN curl -LSs -o rocksdb-6.8.1.tar.gz https://github.com/facebook/rocksdb/archiv
 
 FROM centos@sha256:b5e66c4651870a1ad435cd75922fe2cb943c9e973a9673822d1414824a1d0475
 RUN rpm -Uvh https://mirrors.aliyun.com/epel-archive/7/x86_64/Packages/e/epel-release-7-14.noarch.rpm
+RUN sed -i \
+    -e 's/^mirrorlist=/#mirrorlist=/g' \
+    -e 's|^#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' \
+    /etc/yum.repos.d/CentOS-Base.repo \
+ && yum clean all \
+ && yum makecache
 RUN yum install -y \
       awscli \
       bzip2 \
