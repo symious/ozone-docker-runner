@@ -41,7 +41,7 @@ RUN curl -LSs -o rocksdb-6.8.1.tar.gz https://github.com/facebook/rocksdb/archiv
       && make ldb
 
 FROM centos@sha256:b5e66c4651870a1ad435cd75922fe2cb943c9e973a9673822d1414824a1d0475
-RUN rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+RUN rpm -Uvh https://mirrors.aliyun.com/epel-archive/7/x86_64/Packages/e/epel-release-7-14.noarch.rpm
 RUN yum install -y \
       awscli \
       bzip2 \
@@ -74,7 +74,6 @@ RUN cd /opt && \
     curl -L https://github.com/jvm-profiling-tools/async-profiler/releases/download/v2.0/async-profiler-2.0-linux-x64.tar.gz | tar xvz && \
     mv async-profiler-2.0-linux-x64 profiler
 
-ENV JAVA_HOME=/usr/lib/jvm/jre/
 # OpenJDK 21
 RUN set -eux ; \
     ARCH="$(arch)"; \
