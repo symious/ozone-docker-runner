@@ -18,6 +18,14 @@ FROM golang:1.17.3-buster
 RUN GO111MODULE=off go get -u github.com/rexray/gocsi/csc
 
 FROM centos:7.6.1810
+
+RUN sed -i \
+    -e 's/^mirrorlist=/#mirrorlist=/g' \
+    -e 's|^#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' \
+    /etc/yum.repos.d/CentOS-Base.repo \
+ && yum clean all \
+ && yum makecache
+
 RUN yum -y install \
         bzip2-devel \
         gcc gcc-c++ gcc48-c++ \
